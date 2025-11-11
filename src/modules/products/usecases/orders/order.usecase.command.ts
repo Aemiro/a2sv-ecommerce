@@ -32,8 +32,7 @@ export class OrderCommand {
     orderDomain.createdBy = command?.currentUser?.id;
     orderDomain.updatedBy = command?.currentUser?.id;
 
-    const order = await this.orderRepository.insert(orderDomain);
-    const insertedOrder = await this.orderRepository.save(order);
+    const insertedOrder = await this.orderRepository.insert(orderDomain);
     const orderItems = command.orderItems;
     insertedOrder.totalItems = 0;
     insertedOrder.totalPrice = 0;

@@ -22,6 +22,7 @@ export class OrderEntity extends CommonEntity {
   @OneToMany(() => OrderItemEntity, (orderItem) => orderItem.order, {
     onUpdate: 'CASCADE',
     onDelete: 'RESTRICT',
+    cascade: true,
   })
   orderItems: OrderItemEntity[];
   addOrderItem(orderItem: OrderItemEntity) {

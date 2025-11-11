@@ -20,10 +20,29 @@ import {
   RemoveUserRoleCommand,
   UpdateUserRoleCommand,
 } from './user-role.command';
+import { RoleRepository } from '@users/persistence/roles/role.repository';
+import { RoleEntity } from '@users/persistence/roles/role.entity';
+import { UserRoleEntity } from '@users/persistence/users/user-role.entity';
 @Injectable()
 export class UserCommand implements OnModuleInit {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly roleRepository: RoleRepository,
+  ) {}
   async onModuleInit() {
+    let adminRole = await this.roleRepository.getOneBy(
+      'key',
+      'admin',
+      [],
+      true,
+    );
+    if (!adminRole) {
+      const newAdminRole = new RoleEntity();
+      newAdminRole.key = 'admin';
+      newAdminRole.name = 'Admin';
+      newAdminRole.description = 'Admin Role';
+      adminRole = await this.roleRepository.insert(newAdminRole);
+    }
     const existingAdmin = await this.userRepository.getOneBy(
       'email',
       'admin@gmail.com',
@@ -34,13 +53,20 @@ export class UserCommand implements OnModuleInit {
       const defaultAdmin = new UserEntity();
       defaultAdmin.name = 'Supper Admin';
       defaultAdmin.username = 'superadmin';
-
       defaultAdmin.email = 'admin@gmail.com';
-      defaultAdmin.password = Util.hashPassword('P@ssw0rd');
+      defaultAdmin.password = Util.hashPassword('P@ssw0rd2018');
       defaultAdmin.isActive = true;
       defaultAdmin.gender = 'Male';
       const user = await this.userRepository.insert(defaultAdmin);
-      console.log('Inserted User ', user);
+      const userRole = new UserRoleEntity();
+      userRole.userId = user.id;
+      userRole.roleId = adminRole.id;
+      userRole.createdBy = user.id;
+      userRole.updatedBy = user.id;
+      user.userRoles = [];
+      user.addUserRole(userRole);
+      const updatedUser = await this.userRepository.save(user);
+      console.log('Inserted User ', updatedUser);
     }
   }
   async createUser(command: CreateUserCommand): Promise<UserResponse> {
@@ -58,8 +84,7 @@ export class UserCommand implements OnModuleInit {
     userDomain.updatedBy = command.currentUser.id;
 
     const user = await this.userRepository.insert(userDomain);
-    const result = await this.userRepository.save(user);
-    return UserResponse.toResponse(result);
+    return UserResponse.toResponse(user);
   }
   async updateUser(command: UpdateUserCommand): Promise<UserResponse> {
     const userDomain = await this.userRepository.getById(command.id);

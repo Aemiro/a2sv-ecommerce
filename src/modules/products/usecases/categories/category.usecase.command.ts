@@ -28,8 +28,7 @@ export class CategoryCommand {
     categoryDomain.updatedBy = command.currentUser.id;
 
     const category = await this.categoryRepository.insert(categoryDomain);
-    const result = await this.categoryRepository.save(category);
-    return CategoryResponse.toResponse(result);
+    return CategoryResponse.toResponse(category);
   }
   async updateCategory(
     command: UpdateCategoryCommand,

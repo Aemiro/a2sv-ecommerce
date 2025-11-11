@@ -21,8 +21,7 @@ export class ProductCommand {
     productDomain.updatedBy = command.currentUser.id;
 
     const product = await this.productRepository.insert(productDomain);
-    const result = await this.productRepository.save(product);
-    return ProductResponse.toResponse(result);
+    return ProductResponse.toResponse(product);
   }
   async updateProduct(command: UpdateProductCommand): Promise<ProductResponse> {
     const productDomain = await this.productRepository.getById(command.id);

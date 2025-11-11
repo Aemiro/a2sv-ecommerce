@@ -1,16 +1,22 @@
 import { CurrentUserDto } from '@libs/common';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { ProductEntity } from '@products/persistence/products/product.entity';
-import { IsNotEmpty, IsPositive, Max, Min } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsPositive,
+  MaxLength,
+  Min,
+  MinLength,
+} from 'class-validator';
 export class CreateProductCommand {
   @ApiProperty()
   @IsNotEmpty()
-  @Min(3)
-  @Max(100)
+  @MinLength(3)
+  @MaxLength(100)
   name: string;
   @ApiProperty()
   @IsNotEmpty()
-  @Min(10)
+  @MinLength(10)
   description: string;
   @ApiProperty()
   @IsNotEmpty()

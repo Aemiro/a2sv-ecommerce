@@ -15,6 +15,7 @@ import {
   Put,
   Query,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -40,6 +41,7 @@ import {
 } from '@products/usecases/products/product-image.command';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AllowAnonymous } from '@libs/decorators/allow-anonymous.decorator';
+import { RoleGuard } from '@libs/guards/role.guard';
 @Controller('products')
 @ApiTags('products')
 @ApiResponse({ status: 500, description: 'Internal error' })
@@ -78,6 +80,7 @@ export class ProductController {
     return this.productQuery.getProducts(query, currentUser);
   }
   @Post('create-product')
+  @UseGuards(RoleGuard('admin'))
   @ApiOkResponse({ type: ProductResponse })
   async createProduct(
     @CurrentUser() currentUser: CurrentUserDto,
@@ -87,6 +90,7 @@ export class ProductController {
     return this.command.createProduct(createProductCommand);
   }
   @Put('update-product')
+  @UseGuards(RoleGuard('admin'))
   @ApiOkResponse({ type: ProductResponse })
   async updateProduct(
     @CurrentUser() currentUser: CurrentUserDto,
@@ -96,6 +100,7 @@ export class ProductController {
     return this.command.updateProduct(updateProductCommand);
   }
   @Delete('archive-product')
+  @UseGuards(RoleGuard('admin'))
   @ApiOkResponse({ type: ProductResponse })
   async archiveProduct(
     @CurrentUser() currentUser: CurrentUserDto,
@@ -105,6 +110,7 @@ export class ProductController {
     return this.command.archiveProduct(archiveCommand);
   }
   @Delete('delete-product/:id')
+  @UseGuards(RoleGuard('admin'))
   @ApiOkResponse({ type: Boolean })
   async deleteProduct(
     @CurrentUser() currentUser: CurrentUserDto,
@@ -113,6 +119,7 @@ export class ProductController {
     return this.command.deleteProduct(id, currentUser);
   }
   @Post('restore-product/:id')
+  @UseGuards(RoleGuard('admin'))
   @ApiOkResponse({ type: ProductResponse })
   async restoreProduct(
     @CurrentUser() currentUser: CurrentUserDto,
@@ -144,6 +151,7 @@ export class ProductController {
     }),
   )
   @ApiOkResponse({ type: ProductResponse })
+  @UseGuards(RoleGuard('admin'))
   async addProductImage(
     @CurrentUser() currentUser: CurrentUserDto,
     @Param('productId') productId: string,
@@ -165,6 +173,7 @@ export class ProductController {
     throw new BadRequestException(`Bad Request`);
   }
   @Put('update-product-image')
+  @UseGuards(RoleGuard('admin'))
   @ApiOkResponse({ type: ProductResponse })
   async updateProductImage(
     @CurrentUser() currentUser: CurrentUserDto,
@@ -174,6 +183,7 @@ export class ProductController {
     return this.command.updateProductImage(command);
   }
   @Post('remove-product-image')
+  @UseGuards(RoleGuard('admin'))
   @ApiOkResponse({ type: ProductResponse })
   async archiveProductImage(
     @CurrentUser() currentUser: CurrentUserDto,

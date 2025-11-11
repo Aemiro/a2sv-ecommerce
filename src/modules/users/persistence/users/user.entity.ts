@@ -22,6 +22,7 @@ export class UserEntity extends CommonEntity {
   @OneToMany(() => UserRoleEntity, (userRole) => userRole.user, {
     onUpdate: 'CASCADE',
     onDelete: 'RESTRICT',
+    cascade: true,
   })
   userRoles: UserRoleEntity[];
   addUserRole(userRole: UserRoleEntity) {
