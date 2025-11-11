@@ -1,0 +1,59 @@
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - ${PORT}:${PORT}
+    restart: always
+    env_file:
+      - .env
+  postgres:
+    image: ${POSTGRES_IMAGE}
+    container_name: ${POSTGRES_CONTAINER_NAME}
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  redis:
+    image: ${REDIS_IMAGE}
+    container_name: ${REDIS_CONTAINER_NAME}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+  minio:
+    image: ${MINIO_IMAGE}
+    container_name: ${MINIO_CONTAINER_NAME}
+    restart: always
+    ports:
+      - "${MINIO_PORT}:${MINIO_PORT}"
+      - "${MINIO_ACCESS_PORT}:${MINIO_ACCESS_PORT}"
+    environment:
+      MINIO_ROOT_USER: "${MINIO_ROOT_USER:-admin}"
+      MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD:-password}"
+    volumes:
+      - "minio_data:/var/lib/${MINIO_CONTAINER_NAME}" # Mount a local directory for persistent data
+    command: server /data --console-address ":${MINIO_ACCESS_PORT}"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${MINIO_PORT}/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+volumes:
+  postgres_data:
+  minio_data:
+  redis_data:
