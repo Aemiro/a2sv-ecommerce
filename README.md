@@ -51,11 +51,13 @@ It includes **file upload**, **advanced filtering**, and **Docker-based setup** 
 
 ### 1. Clone the repository
 
-```bash
+``` bash
 git https://github.com/Aemiro/a2sv-ecommerce.git
-cd a2sv-ecommerce
 
-2. Start with Docker
+cd a2sv-ecommerce
+```
+
+### 2. Start with Docker
 
 Ensure Docker and Docker Compose are installed.
 
@@ -66,3 +68,17 @@ docker-compose up --build
   . Build the NestJS service
 
   . Spin up the PostgreSQL database, Minio, and Redis 
+
+
+### 🔑 Default Demo User
+
+The system includes a **default admin account** for testing and demonstration purposes.  
+This user is automatically seeded when the application starts.
+
+**Credentials:**
+
+``` json
+{
+  "email": "admin@gmail.com",
+  "password": "P@ssw0rd2018"
+}
