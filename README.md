@@ -52,7 +52,7 @@ It includes **file upload**, **advanced filtering**, and **Docker-based setup** 
 ### 1. Clone the repository
 
 ``` bash
-git https://github.com/Aemiro/a2sv-ecommerce.git
+git clone https://github.com/Aemiro/a2sv-ecommerce.git
 
 cd a2sv-ecommerce
 ```
@@ -61,7 +61,7 @@ cd a2sv-ecommerce
 
 Ensure Docker and Docker Compose are installed.
 
-docker-compose up --build
+docker-compose up -d --build
 
   . This will automatically:
 
